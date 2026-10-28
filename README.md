@@ -9,14 +9,14 @@ QMK itself is a separate, unmodified checkout.
 ## Hardware
 
 - splitkb Aurora Corne rev1, 3x6 + 3 thumb keys per half
-- Two [Liatris](https://splitkb.com/products/liatris) (RP2040) controllers, left half is master
+- Two [Liatris](https://splitkb.com/products/liatris) (RP2040) controllers; either half can be connected over USB
 - Per-key and underglow RGB (54 LEDs)
 - Built for macOS
 
 ## Features
 
-- **Home row mods**: Ctrl, Option, Command, Shift on `A S D F` and `J K L ;` (280 ms tapping term, permissive hold)
-- **Six layers**: QWERTY, Gaming, numpad, symbols/arrows, F-keys and an Adjust layer
+- **Home row mods**: Ctrl, Option, Command, Shift on `A S D F`, mirrored on `; L K J` (280 ms tapping term, permissive hold)
+- **Six layers**: QWERTY, Gaming, numpad, brackets/arrows, F-keys and an Adjust layer
 - **Layer-colored lighting**: the whole board takes the active layer's color
 - **Ripple effect**: a custom RGB Matrix effect (`LAYER_SPLASH`) sends a ring of light outward from every keypress
 - **Double-tap modifiers** for macOS app hotkeys: hold `K`+`D` to send right Command twice, `L`+`S` for right Option.
@@ -25,7 +25,7 @@ QMK itself is a separate, unmodified checkout.
 ## Layout
 
 Home row keys show their hold action after the dot (`A·Ctl` is `A` on tap, Ctrl on hold).
-Blank keys fall through to the layer below.
+On Lower, Raise and Function, blank keys fall through to the base layer. On QWERTY and Adjust, blank keys do nothing.
 
 ### QWERTY
 
@@ -147,8 +147,11 @@ by GitHub Actions on every push.
 To build locally on macOS:
 
 ```sh
+brew tap osx-cross/arm && brew tap osx-cross/avr
 brew install qmk/qmk/qmk just
+brew link --force arm-none-eabi-gcc@8 avr-gcc@8   # the toolchain is keg-only
 qmk setup                                  # clones QMK into ~/qmk_firmware
+qmk doctor                                 # should end with "QMK is ready to go"
 git clone git@github.com:jaklimoff/qmk_userspace.git
 cd qmk_userspace
 qmk config user.overlay_dir="$(pwd)"
@@ -173,8 +176,10 @@ Without `just`: `qmk compile -kb splitkb/aurora/corne/rev1 -km jack`.
 │   ├── rgb_matrix_user.inc  # LAYER_SPLASH effect
 │   ├── config.h             # tapping and lighting settings
 │   └── rules.mk             # Liatris converter, RGB Matrix
+├── .github/workflows/       # firmware build and release on push
 ├── qmk.json                 # userspace build targets
-└── justfile                 # build / flash / update
+├── justfile                 # build / flash / update
+└── LICENSE
 ```
 
 ## License
